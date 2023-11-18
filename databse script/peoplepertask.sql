@@ -9,7 +9,6 @@ CREATE TABLE Users (
   email varchar(355),
   birthday varchar(255)
 );
-
 /*------insert into users tables------ */
 
 INSERT INTO Users (Name_user, Password_user, email, birthday) 
@@ -104,6 +103,20 @@ CREATE TABLE Projets (
   FOREIGN KEY (ID_sous_Categorie) REFERENCES Sous_Categories(ID)
 );
 
+/*crud table and data*/
+
+ALTER TABLE Projets
+Rename projects;
+
+ALTER TABLE Projects
+ADD project_type varchar(255);
+
+DELETE FROM Projects WHERE Title='Digital Marketing Campaign';
+
+UPDATE Projects
+SET Title = 'Digital Marketing Campaign', ID_User = 2
+WHERE ID_sous_Categorie = 4;
+
 INSERT INTO Projets (Title, Description_project, ID_User, ID_Categorie, ID_sous_Categorie)
 VALUES 
 ('Website Development', 'Building an e-commerce website', 1, 1, 1),
@@ -111,3 +124,31 @@ VALUES
 ('Content Writing for Blog', 'Writing articles for a blog', 3, 3, 3),
 ('Digital Marketing Campaign', 'Running a social media campaign', 4, 4, 4),
 ('Data Analysis for Sales', 'Analyzing sales data for insights', 5, 5, 5);
+
+/* Retrieve usernames and email addresses of all users from the 'Utilisateurs' table.*/
+select Name_user,email from Users;
+
+/* Fetch project titles and descriptions from the 'Projets' table where the project category is 'Data Analysis'.*/
+select Title,Description_project from Projets 
+where ID_Categorie=(select ID from categories where Name_categorie ='Data Analysis');
+
+/* Retrieve distinct categories and their associated sub-categories where the category name contains the word 'Design'.*/
+
+select DISTINCT * from Categories
+where id=(select ID_Categorie from Sous_Categories where Name_categories like '%Design%');
+
+/* Fetch project titles, descriptions, and freelancer names for projects in the 'Web Development' category, ordered by the project title alphabetically.*/
+select Title,Description_project,Name_user
+from Projets
+inner join Users on ID_User=Users.id 
+where ID_Categorie=(select ID from categories WHERE Name_categorie='Web Development')
+order by Title;
+
+/*Create a view that shows project titles, descriptions, and associated freelancer names for projects with 'App Development' as a sub-category. 
+Alias the sub-category column as 'Project_Type'.*/
+create view app_development as
+select Title,Description_project,Name_user,Name_categories as prject_type
+from projets
+join Sous_Categories on projets.ID_sous_Categorie=Sous_Categories.ID
+join users on projets.ID_User=users.ID
+
